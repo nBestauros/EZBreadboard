@@ -1,0 +1,132 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class WireCollider1 : MonoBehaviour
+{
+    private Vector3 screenPoint;
+    private Vector3 offSet;
+    private Vector3 tempPos;
+
+    private bool isConnected;
+
+    private bool mouseClicked;
+    private bool hasLeft;
+    public int num;
+
+    private Collider tempCollider;
+    CircuitElement connectedWith;
+
+
+    void SetNum(int num)
+    {
+        this.num = num;
+        //Debug.Log("Set num: " + num);
+    }
+    void setConnected(bool val)
+    {
+        isConnected = val;
+        if (isConnected == false)
+        {
+            connectedWith = null;
+        }
+        this.SendMessageUpwards("Connected", this);
+    }
+
+    public CircuitElement getConnectedWith()
+    {
+        return connectedWith;
+    }
+
+    void OnMouseDown()
+    {
+        tempCollider = null;
+        hasLeft = true;
+        mouseClicked = true;
+        //Debug.Log("hey");
+        screenPoint = Camera.main.WorldToScreenPoint(transform.position);
+        offSet = transform.position - Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, screenPoint.z));
+        tempPos = transform.position;
+    }
+
+    private void OnMouseDrag()
+    {
+        Vector3 curScreenPoint = new Vector3(Input.mousePosition.x, Input.mousePosition.y, screenPoint.z);
+        Vector3 curPosition = Camera.main.ScreenToWorldPoint(curScreenPoint) + offSet;
+        transform.position = curPosition;
+        SendMessageUpwards("UpdatePos");
+    }
+
+    //When the mouse is released, check if the (previously) held down wire collider was close to another one,
+    //if so, let the other WIRE know that this wire is connected to it
+    //also, let THIS WIRE know that the other wire is connected to this.
+    //finally "Snap" the position of the collider to the other wire collider, and update the current wire itself to realign to the new one.
+    private void OnMouseUp()
+    {
+        mouseClicked = false;
+        if (!hasLeft)
+        {
+            WireCollider other = tempCollider.gameObject.GetComponent<WireCollider>();
+            
+            other.connectedWith = this.transform.parent.gameObject.GetComponent<Wire>();
+            other.setConnected(true);
+
+            this.connectedWith = other.transform.parent.gameObject.GetComponent<Wire>();
+            this.setConnected(true);
+
+            transform.position = tempPos;
+            SendMessageUpwards("UpdatePos");
+        }
+    }
+
+    //if we enter the viscinity of another wire collider
+    //check if the other wire collider is connected,
+    //if its not, mark the fact that we havent currently left the viscinity of it, save the position of the other wire as well.
+    //if this boolean stays false when OnMouseUp is called, then we can run that code, otherwise, it meant we moved too far away.
+    private void OnTriggerEnter(Collider other)
+    {
+        if (mouseClicked)
+        {
+            if (other.tag ==this.tag)
+            {
+                GameObject otherWireCollider = other.gameObject;
+                WireCollider otherWireColliderCollider = otherWireCollider.GetComponent<WireCollider>();
+                if (!otherWireColliderCollider.isConnected)
+                {
+                    tempCollider = other;
+                    hasLeft = false;
+                    //Debug.Log("Collided");
+                    tempPos = other.transform.position;
+                }
+            }
+        }
+    }
+
+    //if we left the region of a wire collider, and that wire collider was the wire we were previously connected to, disconnect from it.
+    private void OnTriggerExit(Collider other)
+    {
+        if (mouseClicked)
+        {
+            if (other.tag == this.tag)
+            {
+                if (this.isConnected && this.connectedWith==other.transform.parent.gameObject.GetComponent<Wire>())
+                {
+                    other.gameObject.GetComponent<WireCollider>().setConnected(false);
+                }
+                this.setConnected(false);
+                hasLeft = true;
+            }
+        }
+    }
+    // Start is called before the first frame update
+    void Start()
+    {
+        GetComponent<Collider>().isTrigger = true;
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        
+    }
+}

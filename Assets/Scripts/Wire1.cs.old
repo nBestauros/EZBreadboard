@@ -1,0 +1,75 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class Wire1 : CircuitElement
+{
+    private LineRenderer lr;
+    protected Vector3 pos1;
+    protected Vector3 pos2;
+
+
+    void Connected(WireCollider collider)
+    {
+        if (collider.num == 1)
+        {
+            Debug.Log("yo");
+            left = collider.getConnectedWith();
+        }
+        else if (collider.num==2)
+        {
+            Debug.Log("yo2");
+            right = collider.getConnectedWith();
+        }
+        else
+        {
+            Debug.Log("brokey brokey colliders!");
+        }
+    }
+
+    void UpdatePos()
+    {
+        pos1 = collider1.transform.position;
+        pos2 = collider2.transform.position;
+        lr.SetPosition(0, pos1);
+        lr.SetPosition(1, pos2);
+    }
+
+    // Start is called before the first frame update
+    void Start()
+    {
+        pos1 = new Vector3(Random.Range(-90, 90), Random.Range(-40, 40), 89);
+        pos2 = new Vector3(Random.Range(-90, 90), Random.Range(-40, 40), 89);
+
+        lr = gameObject.AddComponent<LineRenderer>();
+        Material myMat = Resources.Load("BLACK_MAT", typeof(Material)) as Material;
+        lr.material = myMat;
+        lr.startColor = new Color(0.3f, 0, 0);
+        lr.endColor = new Color(0.3f, 0, 0);
+        //lr.startWidth = 0.3f;
+        //lr.endWidth = 0.3f;
+
+        collider1 = (GameObject)Instantiate(Resources.Load("CircuitCollider"), pos1, gameObject.transform.rotation);
+        collider1.transform.GetComponent<WireCollider>().SendMessage("SetNum", 1);
+        collider2 = (GameObject)Instantiate(Resources.Load("CircuitCollider"), pos1, gameObject.transform.rotation);
+        collider2.transform.GetComponent<WireCollider>().SendMessage("SetNum", 2);
+
+        collider1.transform.parent = gameObject.transform;
+        collider2.transform.parent = gameObject.transform;
+
+        collider1.transform.position = pos1;
+        collider2.transform.position = pos2;
+
+        lr.SetPosition(0, pos1);
+        lr.SetPosition(1, pos2);
+
+
+        
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        
+    }
+}
