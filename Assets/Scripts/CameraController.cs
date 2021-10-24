@@ -11,12 +11,6 @@ public class CameraController : MonoBehaviour
 
     private float rotationX = 0;
     private float rotationY = 0;
-
-    void Start() // Lock and hide the cursor
-    {
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
-    }
     void Update()
     {
         // Collects rotation data from the mouse on the x and y axis
@@ -46,12 +40,6 @@ public class CameraController : MonoBehaviour
         if (Input.GetKey(KeyCode.Q)) // Press Q to move downwards
         {
             transform.position -= transform.up * climbSpeed * Time.deltaTime;
-        }
-
-        if (Input.GetKeyDown(KeyCode.End)) // Press End to regain cursor control
-        {
-            Cursor.visible = true;
-            Cursor.lockState = CursorLockMode.None;
         }
     }
 }

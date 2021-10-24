@@ -25,11 +25,11 @@ public class MasterDataHandler : MonoBehaviour
         {
             text.text = text.text + elementList[i]+" ";
         }
+        CircuitData.data = new List<string>(elementList);
     }
 
     public void AddLed()
     {
-        Debug.Log("hey");
         if (elementList.Count < 20)
         {
             

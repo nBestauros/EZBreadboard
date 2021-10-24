@@ -16,16 +16,11 @@ public class ModelSpawner : MonoBehaviour
     public GameObject Vout1;
 
 
-
-
     void Start()
     { 
-        GameObject[] elements = new GameObject[5];
-        elements[0] = resistor;
-        elements[1] = LED;
-        elements[2] = circuitSwitch;
-        elements[3] = resistor;
-        elements[4] = LED;
+        
+        List<string> stringElements = CircuitData.data;
+        GameObject[] elements = createElements(stringElements);
 
 
         // Gets the initial positions and rotations for each circuit element
@@ -59,6 +54,29 @@ public class ModelSpawner : MonoBehaviour
         placeGroundWire(c, location, elements[elements.Length -1], isReversing); // after the elements have been placed, connect the ending element to ground
     }
 
+
+    GameObject[] createElements(List<string> stringElements)
+    {
+        GameObject[] elements = new GameObject[stringElements.Count];
+
+        for (int i = 0; i < stringElements.Count; i++)
+        {
+            if (stringElements[i] == "Resistor")
+            {
+                elements[i] = resistor;
+            } 
+            else if (stringElements[i] == "Switch")
+            {
+                elements[i] = circuitSwitch;
+            } 
+            else if (stringElements[i] == "LED")
+            {
+                elements[i] = LED;
+            }
+        }
+
+        return elements;
+    }
         /* placeGroundWire
          * ---------------
          * This method receives data about the last circuit element to be placed such as its location,

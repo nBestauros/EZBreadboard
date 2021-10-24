@@ -6,10 +6,16 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 0
-    path: Assets/Scenes/AR.unity
-    guid: ece5c780f60a3664da722c0ba0710f0c
+    path: 
+    guid: 00000000000000000000000000000000
   - enabled: 1
     path: Assets/Scenes/CircuitBuilder.unity
-    guid: 9fc0d4010bbf28b4594072e72b8655ab
+    guid: 2814c4055666c7941be66c0151902aad
+  - enabled: 1
+    path: Assets/Scenes/3D Circuit.unity
+    guid: ffc7b022d87365c42b6190c1fe361308
+  - enabled: 0
+    path: 
+    guid: 00000000000000000000000000000000
   m_configObjects:
     UnityEditor.XR.ARCore.ARCoreSettings: {fileID: 11400000, guid: c910455bd7c7ab14a9e7155d1fa42e6d, type: 2}
